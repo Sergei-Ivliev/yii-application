@@ -9,7 +9,7 @@ $params = array_merge(
 return [
     'id' => 'app-console',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => ['_log'],
     'controllerNamespace' => 'console\controllers',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
@@ -22,7 +22,10 @@ return [
           ],
     ],
     'components' => [
-        'log' => [
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager',
+        ],
+        '_log' => [
             'targets' => [
                 [
                     'class' => 'yii\log\FileTarget',
