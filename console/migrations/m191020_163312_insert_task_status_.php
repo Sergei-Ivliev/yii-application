@@ -12,7 +12,15 @@ class m191020_163312_insert_task_status_ extends Migration
      */
     public function safeUp()
     {
+        $this->insert('task_status', ['name' => 'NEW']);
+        $this->insert('task_status', ['name' => 'IN_PROGRESS']);
+        $this->insert('task_status', ['name' => 'ON_TESTING']);
+        $this->insert('task_status', ['name' => 'READY']);
+        $this->insert('task_status', ['name' => 'ARCHIVE']);
 
+        $this->insert('task_priority', ['name' => 'LOW']);
+        $this->insert('task_priority', ['name' => 'NORMAL']);
+        $this->insert('task_priority', ['name' => 'HIGH']);
     }
 
     /**
@@ -20,9 +28,15 @@ class m191020_163312_insert_task_status_ extends Migration
      */
     public function safeDown()
     {
-        echo "m191020_163312_insert_task_status_ cannot be reverted.\n";
+        $this->delete('task_status', ['name' => 'NEW']);
+        $this->delete('task_status', ['name' => 'IN_PROGRESS']);
+        $this->delete('task_status', ['name' => 'ON_TESTING']);
+        $this->delete('task_status', ['name' => 'READY']);
+        $this->delete('task_status', ['name' => 'ARCHIVE']);
 
-        return false;
+        $this->delete('task_priority', ['name' => 'LOW']);
+        $this->delete('task_priority', ['name' => 'NORMAL']);
+        $this->delete('task_priority', ['name' => 'HIGH']);
     }
 
     /*

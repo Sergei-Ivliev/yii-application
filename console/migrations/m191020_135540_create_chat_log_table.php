@@ -14,6 +14,9 @@ class m191020_135540_create_chat_log_table extends Migration
     {
         $this->createTable('{{%chat_log}}', [
             'id' => $this->primaryKey(),
+            'username' => $this->string(),
+            'message' => $this->string(),
+            'created_at' => $this->integer(),
         ]);
     }
 
