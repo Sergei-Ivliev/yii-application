@@ -4,7 +4,15 @@
 namespace frontend\modules\api\controllers;
 
 
-class UserController
-{
+use common\models\User;
+use yii\rest\ActiveController;
 
+class UserController extends ActiveController
+{
+    public $modelClass = User::class;
+
+    public function actionMe()
+    {
+        return ['me' => 'me'];
+    }
 }
