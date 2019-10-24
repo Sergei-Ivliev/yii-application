@@ -42,4 +42,6 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 
+    <?= $this->render('../chat/index.php') ?>
+
 </div>

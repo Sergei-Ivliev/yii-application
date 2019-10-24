@@ -50,5 +50,7 @@ $this->title = 'My Yii Application';
             </div>
         </div>
 
+        <?= $this->render('../chat/index.php') ?>
+
     </div>
 </div>
