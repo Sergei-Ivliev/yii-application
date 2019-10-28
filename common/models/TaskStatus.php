@@ -4,6 +4,7 @@
 namespace common\models;
 
 
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
@@ -53,7 +54,7 @@ class TaskStatus extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getTasks()
     {

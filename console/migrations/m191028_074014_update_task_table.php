@@ -12,7 +12,10 @@ class m191028_074014_update_task_table extends Migration
      */
     public function safeUp()
     {
-
+        $this->alterColumn('task', 'executor_id', $this->integer());
+        $this->addColumn('task', 'accountable_id', $this->integer());
+        $this->addForeignKey('fk-task-user-executor_id', 'task', 'executor_id','user', 'id');
+        $this->addForeignKey('fk-task-user-accountable_id', 'task', 'accountable_id','user', 'id');
     }
 
     /**
@@ -20,9 +23,10 @@ class m191028_074014_update_task_table extends Migration
      */
     public function safeDown()
     {
-        echo "m191028_074014_update_task_table cannot be reverted.\n";
-
-        return false;
+        $this->dropForeignKey('fk-task-user-executor_id', 'task');
+        $this->dropForeignKey('fk-task-user-accountable_id', 'task');
+        $this->dropColumn('task', 'accountable_id');
+        $this->alterColumn('task', 'executor_id', $this->string());
     }
 
     /*

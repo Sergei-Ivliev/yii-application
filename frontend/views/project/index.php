@@ -1,5 +1,8 @@
 <?php
 
+use common\models\Project;
+use common\widgets\chatWidget\ChatWidget;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\grid\GridView;
 
@@ -24,15 +27,15 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'name',
                 'format' => 'raw',
-                'value' => function(\common\models\Project $model) {
+                'value' => function(Project $model) {
                     return Html::a($model->name, ['project/view', 'id'=>$model->id]);
                 }
             ],
             [
                 'attribute' => 'project_status_id',
 //                'filter' => \common\models\ProjectStatus::getProjectStatusName(),
-                'filter' => \yii\helpers\ArrayHelper::map(\common\models\ProjectStatus::find()->asArray()->all(), 'id', 'name'),
-                'value'=> function(\common\models\Project $model) {
+                'filter' => ArrayHelper::map(\common\models\ProjectStatus::find()->asArray()->all(), 'id', 'name'),
+                'value'=> function(Project $model) {
                     return $model->projectStatus->name;
 //                    return \common\models\ProjectStatus::getProjectStatusName()[$model->project_status_id];
                 }
@@ -42,6 +45,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
         ],
     ]); ?>
-<?=\common\widgets\chatWidget\ChatWidget::widget();?>
+<?= ChatWidget::widget();?>
 
 </div>

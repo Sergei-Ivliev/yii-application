@@ -1,5 +1,6 @@
 <?php
 
+use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -16,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="project-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
-    <?= \yii\grid\GridView::widget([
+    <?= GridView::widget([
         'filterModel' => $taskSearch,
         'dataProvider' => $taskDataProvider,
         'columns' => [

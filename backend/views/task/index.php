@@ -1,5 +1,6 @@
 <?php
 
+use common\models\TaskStatus;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use common\models\Task;
@@ -31,12 +32,12 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'authorEmail',
                 'value' => function (Task $model) {
-                    return $model->author->username;
+                    return $model->author->email;
                 }
             ],
             [
                 'attribute' => 'status_id',
-                'filter' => \common\models\TaskStatus::getStatusName(),
+                'filter' => TaskStatus::getStatusName(),
                 'value' => function (Task $model) {
                     return $model->status->name;
                 }

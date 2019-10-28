@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: evg
- * Date: 21/09/2019
- * Time: 11:27
- */
 
 namespace common\widgets\chatWidget;
 

@@ -1,11 +1,13 @@
 <?php
 
 use common\models\Task;
+use common\widgets\chatWidget\ChatWidget;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
+/* @var $searchModel frontend\models\TaskSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Tasks';
@@ -22,6 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
@@ -35,15 +38,17 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'status_id',
             'description:ntext',
-            'created_at',
-            //'updated_at',
-            //'author_id',
+            'created_at:date',
+            'updated_at:date',
+            'author_id',
             //'executor_id',
             //'priority_id',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
-    <?= $this->render('../chat/index.php') ?>
-
+    <?= ChatWidget::widget(); ?>
 </div>
+<?//= $this->render('../chat/index.php') ?>
+
+

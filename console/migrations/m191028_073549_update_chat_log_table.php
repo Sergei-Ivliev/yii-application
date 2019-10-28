@@ -12,7 +12,8 @@ class m191028_073549_update_chat_log_table extends Migration
      */
     public function safeUp()
     {
-
+        $this->addColumn('chat_log', 'project_id', $this->integer()->after('message'));
+        $this->addColumn('chat_log', 'task_id', $this->integer()->after('project_id'));
     }
 
     /**
@@ -20,9 +21,8 @@ class m191028_073549_update_chat_log_table extends Migration
      */
     public function safeDown()
     {
-        echo "m191028_073549_update_chat_log_table cannot be reverted.\n";
-
-        return false;
+        $this->dropColumn('chat_log', 'project_id');
+        $this->dropColumn('chat_log', 'task_id');
     }
 
     /*

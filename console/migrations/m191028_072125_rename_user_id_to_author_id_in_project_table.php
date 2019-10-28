@@ -12,7 +12,7 @@ class m191028_072125_rename_user_id_to_author_id_in_project_table extends Migrat
      */
     public function safeUp()
     {
-
+        $this->renameColumn('project', 'user_id', 'author_id');
     }
 
     /**
@@ -20,9 +20,7 @@ class m191028_072125_rename_user_id_to_author_id_in_project_table extends Migrat
      */
     public function safeDown()
     {
-        echo "m191028_072125_rename_user_id_to_author_id_in_project_table cannot be reverted.\n";
-
-        return false;
+        $this->renameColumn('project', 'author_id', 'user_id');
     }
 
     /*
