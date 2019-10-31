@@ -12,7 +12,9 @@ class m191028_210422_update_project_status_table extends Migration
      */
     public function safeUp()
     {
-
+        $this->insert('project_status', ['name' => 'В работе']);
+        $this->insert('project_status', ['name' => 'Планируется']);
+        $this->insert('project_status', ['name' => 'Завершён']);
     }
 
     /**
@@ -20,9 +22,9 @@ class m191028_210422_update_project_status_table extends Migration
      */
     public function safeDown()
     {
-        echo "m191028_210422_update_project_status_table cannot be reverted.\n";
-
-        return false;
+        $this->delete('project_status', ['name' => 'Завершён']);
+        $this->delete('project_status', ['name' => 'Планируется']);
+        $this->delete('project_status', ['name' => 'В работе']);
     }
 
     /*

@@ -7,7 +7,10 @@ namespace frontend\modules\api\controllers;
 use common\models\Task;
 use common\models\User;
 use yii\data\ActiveDataProvider;
+use yii\filters\auth\CompositeAuth;
+use yii\filters\auth\HttpBasicAuth;
 use yii\filters\auth\HttpBearerAuth;
+use yii\filters\auth\QueryParamAuth;
 use yii\rest\ActiveController;
 
 class UserController extends ActiveController
@@ -21,32 +24,32 @@ class UserController extends ActiveController
         //каждый запрос к этому контроллеру будет фильтроваться через это поведение
         //authenticator - имеет больший приоритет чем ACF
         $behaviors['authenticator'] = [
-            'class' => HttpBearerAuth::class,
+            'class' => CompositeAuth::class,
+            'authMethods' => [
+                HttpBearerAuth::class,
+                HttpBasicAuth::class,
+                QueryParamAuth::class,
+            ],
             //нужно исключить action которые используются в accessFilter ACF
-            'except' => ['create']
+//            'except' => ['create']
         ];
         return $behaviors;
     }
-//
-//
-//
+
+
+
     public function actionMe()
     {
-        return \Yii::$app->user->identity;
+        return ['me' => \Yii::$app->user->identity];
     }
 //
-    public function actionTasks($id = null)
+    public function actionTasks($id)
     {
-        if (is_null($id)) {
-            $id = \Yii::$app->user->id;
-        }
-
-        $dataProvider = new ActiveDataProvider([
-            'query' => Task::find()->where(['author_id' => $id])
+        return new ActiveDataProvider([
+            'query' => Task::find()->where(['author_id'=>$id]),
+            'pagination' => [
+                'pageSize' => 3,
+            ],
         ]);
-
-        return $dataProvider;
-//        $tasks = Task::findAll(['author_id' => $id]);
-//        return $tasks;
     }
 }

@@ -1,14 +1,11 @@
 <?php
-/**
- * Created by Artem Manchenkov
- * manchenkov@reg.ru
- * 2019
- */
+
+use yii\rest\UrlRule;
 
 return [
     'rules' => [
         [
-            'class' => \yii\rest\UrlRule::class,
+            'class' => UrlRule::class,
             'controller' => 'api/user',
             'pluralize' => true,
             'extraPatterns' => [
@@ -19,7 +16,7 @@ return [
             ],
         ],
         [
-            'class' => \yii\rest\UrlRule::class,
+            'class' => UrlRule::class,
             'controller' => 'api/task',
             'pluralize' => true,
         ],

@@ -1,5 +1,6 @@
 <?php
 
+use common\models\Task;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -33,7 +34,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'description:ntext',
             'author_id',
-            'status.name',
+//            [
+//                'label'=>'Автор',
+//                'value'=> function(Task $model) {
+//                    return $model->author->username;
+//                }
+//            ],
+            'status',
             'priority_id',
         ],
     ]) ?>

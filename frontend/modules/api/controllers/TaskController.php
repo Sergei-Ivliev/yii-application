@@ -13,6 +13,23 @@ class TaskController extends ActiveController
 {
     public $modelClass = Task::class;
 
+
+    /**
+     * @param string $action
+     * @param null $model
+     * @param array $params
+     * @throws ForbiddenHttpException
+     */
+    public function checkAccess($action, $model = null, $params = [])
+    {
+//        if ($action === 'update' || $action==='delete') {
+        if ($action === 'view') {
+            if ($model->author_id !== \Yii::$app->user->id) {
+                throw new ForbiddenHttpException('Нельзя смотреть задачи где вы не являетесь автором');
+            }
+        }
+    }
+
     public function behaviors()
     {
         $behaviors = parent::behaviors();
@@ -22,14 +39,8 @@ class TaskController extends ActiveController
         return $behaviors;
     }
 
-    public function checkAccess($action, $model = null, $params = [])
+    public function actionRandom($count)
     {
-        if ($action === 'update' || $action==='delete') {
-//        if ($action === 'view') {
-            if ($model->author_id !== \Yii::$app->user->id) {
-                throw new ForbiddenHttpException('Нельзя смотреть задачи где вы не являетесь автором');
-            }
-        }
-
+        return ['count' => $count];
     }
 }

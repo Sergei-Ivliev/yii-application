@@ -9,6 +9,7 @@ use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\helpers\Url;
 use yii\web\Link;
+use yii\web\Linkable;
 
 
 /**
@@ -35,7 +36,7 @@ use yii\web\Link;
  * @property User $accountable
  * @property Project $project
  */
-class Task extends ActiveRecord
+class Task extends ActiveRecord implements Linkable
 {
     /**
      * {@inheritdoc}
@@ -56,7 +57,6 @@ class Task extends ActiveRecord
             [['description'], 'string'],
             [['name'], 'string', 'max' => 255],
             [['author_id', 'status_id', 'priority_id', 'project_id', 'executor_id', 'accountable_id'], 'integer'],
-            [['name', 'executor_id'], 'string', 'max' => 255],
             [['priority_id'], 'exist', 'skipOnError' => true, 'targetClass' => TaskPriority::class, 'targetAttribute' => ['priority_id' => 'id']],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => TaskStatus::class, 'targetAttribute' => ['status_id' => 'id']],
             [['created_at', 'updated_at'], 'safe']
@@ -117,7 +117,7 @@ class Task extends ActiveRecord
         if ($insert) {
             ChatLog::saveLog([
                 'username' => Yii::$app->user->identity->username,
-                'message' => 'Создал новый проект #'.$this->id,
+                'message' => 'Создал новую задачу #'.$this->id,
                 'task_'=>$this->id,
             ]);
         }
@@ -169,7 +169,7 @@ class Task extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getAuthor()
     {
@@ -177,7 +177,7 @@ class Task extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getExecutor()
     {
@@ -185,7 +185,7 @@ class Task extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getAccountable()
     {
@@ -201,7 +201,7 @@ class Task extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getProject()
     {
@@ -224,17 +224,21 @@ class Task extends ActiveRecord
             },
             'status_id' => function () {
                 return $this->status->name;
+            },
+            'someRandomName' => function () {
+                return rand(0, 100000);
             }
         ];
 
         return array_merge($parentFields, $modelFields);
     }
 
+
     public function getLinks()
     {
         return [
             Link::REL_SELF => Url::to(['task/view', 'id' => $this->id], true),
-            'author' => Url::to(['user/view', 'id' => $this->author_id], true),
+            'author_link' => Url::to(['user/view', 'id' => $this->author_id], true),
         ];
     }
 
@@ -242,7 +246,7 @@ class Task extends ActiveRecord
     {
         return [
             'author' => function () {
-                $this->author;
+               return $this->author;
             }
         ];
     }

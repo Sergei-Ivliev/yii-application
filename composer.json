@@ -27,7 +27,7 @@
     "cboden/ratchet": "^0.4.1",
     "ext-json": "*",
     "sonko-dmitry/yii2-telegram-bot-api": "*",
-    "ext-http": "*"
+    "2amigos/yii2-editable-widget": "~1.0"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.1.0",

@@ -47,13 +47,13 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        'baseUrl' => '/admin',
+//        'baseUrl' => '/admin',
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                '' => 'site/index',
-                '<controller:\w+>/<action:\w+>/' => '<controller>/<action>',
+//                '' => 'site/index',
+//                '<controller:\w+>/<action:\w+>/' => '<controller>/<action>',
             ],
         ],
     ],

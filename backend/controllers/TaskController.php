@@ -8,6 +8,7 @@ use common\models\User;
 use Yii;
 use common\models\Task;
 use backend\models\TaskSearch;
+use yii\db\StaleObjectException;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -112,6 +113,8 @@ class TaskController extends Controller
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {

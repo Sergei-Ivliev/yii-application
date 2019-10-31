@@ -6,10 +6,14 @@ use Yii;
 use yii\base\Exception;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\filters\auth\HttpBasicAuth;
 use yii\filters\auth\HttpBearerAuth;
 use yii\filters\auth\QueryParamAuth;
+use yii\helpers\Url;
 use yii\web\IdentityInterface;
+use yii\web\Link;
 
 /**
  * User model
@@ -31,7 +35,6 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_DELETED = 0;
     const STATUS_INACTIVE = 9;
     const STATUS_ACTIVE = 10;
-
 
     /**
      * {@inheritdoc}
@@ -59,6 +62,7 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             [['username', 'email'], 'required'],
             [['username', 'email'], 'string'],
+            [['username', 'email'], 'unique'],
             [['email'], 'email'],
             ['status', 'default', 'value' => self::STATUS_INACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_DELETED]],
@@ -82,6 +86,10 @@ class User extends ActiveRecord implements IdentityInterface
             return static::findOne(['auth_key' => $token]);
         } else if ($type === QueryParamAuth::class) {
             return static::findOne(['auth_key' => $token]);
+        } elseif ( $type === HttpBasicAuth::class) {
+            $password = Yii::$app->getRequest()->getAuthPassword();
+            $login = Yii::$app->getRequest()->authUser;
+            $user = self::findByUsername($login);
         }
     }
 
@@ -225,23 +233,65 @@ class User extends ActiveRecord implements IdentityInterface
         $this->password_reset_token = null;
     }
 
-    public static function getActiveUsers()
+    public static function findActiveUsers(array $selectFields = []) :ActiveQuery
     {
-        return self::find()->where(['status' => self::STATUS_ACTIVE])->all();
+        $query =  self::find()->where(['status'=>self::STATUS_ACTIVE]);
 
+        if (!empty($selectFields)) {
+            $query->select($selectFields);
+        }
+        return $query;
     }
 
-    public function afterValidate()
+    public function beforeSave($insert)
     {
-        try {
-            $this->setPassword(Yii::$app->security->generateRandomString(6));
-        } catch (Exception $e) {
+        if ($insert) {
+            try {
+                $this->setPassword(Yii::$app->security->generateRandomString(6));
+            } catch (Exception $e) {
+            }
+            try {
+                $this->generateAuthKey();
+            } catch (Exception $e) {
+            }
+            $this->generateEmailVerificationToken();
         }
-        try {
-            $this->generateAuthKey();
-        } catch (Exception $e) {
+        return parent::beforeSave($insert);
+    }
+
+    public function getLinks()
+    {
+        return [
+            Link::REL_SELF => Url::to(['user/view', 'id' => $this->id], true),
+            'tasks' => Url::to(['user/tasks', 'id' => $this->id], true),
+        ];
+    }
+
+    public function fields()
+    {
+        $fields = parent::fields();
+
+        if (!$this->isNewRecord) {
+            unset($fields['auth_key']);
         }
-        $this->generateEmailVerificationToken();
-        parent::afterValidate();
+
+        unset($fields['password_hash']);
+        unset($fields['password_reset_token']);
+        unset($fields['verification_token']);
+        unset($fields['updated_at']);
+
+        return array_merge($fields, [
+            'created_at' => function () {
+                return Yii::$app->formatter->asDatetime($this->created_at);
+            },
+            'status' => 'statusName'
+        ]);
+    }
+
+    public function getStatusName()
+    {
+        if ($this->status === User::STATUS_ACTIVE) {
+            return 'Активный';
+        }
     }
 }
