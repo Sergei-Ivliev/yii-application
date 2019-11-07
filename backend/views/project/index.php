@@ -1,5 +1,8 @@
 <?php
 
+use common\models\Project;
+use common\models\ProjectStatus;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\grid\GridView;
 
@@ -30,14 +33,29 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'name',
                 'format' => 'raw',
-                'value' => function (\common\models\Project $model) {
+                'value' => function (Project $model) {
                     return Html::a($model->name, ['project/view', 'id' => $model->id]);
                 }
             ],
-            'author_id',
-            'project_status_id',
-            'created_at',
-            //'updated_at',
+//            'author_id',
+            [
+                'attribute' => 'author_id',
+                'value' => function (Project $model) {
+                    return $model->author->username;
+                }
+            ],
+//            'project_status_id',
+            [
+                'attribute' => 'project_status_id',
+//                'filter' => \common\models\ProjectStatus::getProjectStatusName(),
+                'filter' => ArrayHelper::map(ProjectStatus::find()->asArray()->all(), 'id', 'name'),
+                'value' => function (Project $model) {
+                    return $model->projectStatus->name;
+//                    return ProjectStatus::getProjectStatusName()[$model->project_status_id];
+                }
+            ],
+            'created_at:datetime',
+            'updated_at:datetime',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

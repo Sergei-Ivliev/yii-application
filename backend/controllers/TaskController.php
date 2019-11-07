@@ -3,7 +3,6 @@
 namespace backend\controllers;
 
 use common\models\Project;
-use common\models\ProjectStatus;
 use common\models\User;
 use Yii;
 use common\models\Task;
@@ -41,7 +40,11 @@ class TaskController extends Controller
     public function actionIndex()
     {
         $searchModel = new TaskSearch();
+        Yii::beginProfile('geekbrains', '$dataProvider = $searchModel->search(Yii::$app->request->queryParams);');
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 20;
+        Yii::endProfile('geekbrains', '$dataProvider = $searchModel->search(Yii::$app->request->queryParams);');
+
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -72,13 +75,14 @@ class TaskController extends Controller
         $model = new Task();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'New task " ' . $model->name . ' " is created');
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
             'model' => $model,
-            'activeUsers' => ArrayHelper::map(
-                User::getActiveUsers(), 'id', 'email'),
+            'authors' => ArrayHelper::map(
+                User::findActiveUsers(['id', 'email'])->asArray()->all(), 'id', 'email'),
             'projects' => ArrayHelper::map(Project::getActiveProjects(), 'id', 'name')
         ]);
     }
@@ -95,13 +99,14 @@ class TaskController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'The task " ' . $model->name . ' " is updated');
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
-            'activeUsers'=>ArrayHelper::map(
-                User::getActiveUsers(), 'id', 'email'),
+            'authors' => ArrayHelper::map(
+                User::findActiveUsers(['id', 'email'])->asArray()->all(), 'id', 'email'),
             'projects' => ArrayHelper::map(Project::getActiveProjects(), 'id', 'name')
 
         ]);

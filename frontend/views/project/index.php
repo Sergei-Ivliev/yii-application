@@ -1,7 +1,8 @@
 <?php
 
 use common\models\Project;
-use common\widgets\chatWidget\ChatWidget;
+use common\models\ProjectStatus;
+use common\widgets\chat\ChatWidget;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\grid\GridView;
@@ -17,6 +18,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
+    <p>
+        <?= Html::a('Create Project', ['create'], ['class' => 'btn btn-success']) ?>
+    </p>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -24,6 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
+            'id',
             [
                 'attribute' => 'name',
                 'format' => 'raw',
@@ -31,13 +36,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     return Html::a($model->name, ['project/view', 'id'=>$model->id]);
                 }
             ],
+            'author_id',
             [
                 'attribute' => 'project_status_id',
 //                'filter' => \common\models\ProjectStatus::getProjectStatusName(),
-                'filter' => ArrayHelper::map(\common\models\ProjectStatus::find()->asArray()->all(), 'id', 'name'),
+                'filter' => ArrayHelper::map(ProjectStatus::find()->asArray()->all(), 'id', 'name'),
                 'value'=> function(Project $model) {
                     return $model->projectStatus->name;
-//                    return \common\models\ProjectStatus::getProjectStatusName()[$model->project_status_id];
+//                    return ProjectStatus::getProjectStatusName()[$model->project_status_id];
                 }
             ],
             'created_at:datetime',

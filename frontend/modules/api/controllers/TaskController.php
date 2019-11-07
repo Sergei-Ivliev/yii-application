@@ -22,7 +22,6 @@ class TaskController extends ActiveController
      */
     public function checkAccess($action, $model = null, $params = [])
     {
-//        if ($action === 'update' || $action==='delete') {
         if ($action === 'view') {
             if ($model->author_id !== \Yii::$app->user->id) {
                 throw new ForbiddenHttpException('Нельзя смотреть задачи где вы не являетесь автором');

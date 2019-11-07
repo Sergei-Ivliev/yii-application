@@ -1,18 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: evg
- * Date: 04/11/2019
- * Time: 14:23
- */
 
 
 namespace common\components\behaviors;
-use common\components\interfaces\ChatLoggable;
 use common\models\Project;
 use common\models\Task;
 use yii\base\Behavior;
-use yii\base\InvalidArgumentException;
 use yii\db\ActiveRecord;
 
 /**
@@ -36,6 +28,7 @@ class ChatLogBehavior extends Behavior
 
     /**
      * @param $event
+     * @return void
      */
     public function saveChatLog($event)
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace common\widgets\chatWidget;
+namespace common\widgets\chat;
 
 
 use yii\web\AssetBundle;

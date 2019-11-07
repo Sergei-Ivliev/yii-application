@@ -1,11 +1,5 @@
 <?php
 
-use yii\web\View;
-
-/** @var string $username  */
-/** @var View $this $a */
-$a=1;
-
 ?>
     <div class="chat-popup form-container">
         <div class="js-chat-content">
@@ -20,7 +14,3 @@ $a=1;
         </div>
         <button type="button" style="display: none;" class="btn btn-primary js-show">Show</button>
     </div>
-
-<?= \yii\helpers\Html::hiddenInput('username', $this->context->username, ['class' => 'js-username']) ?>
-<?= \yii\helpers\Html::hiddenInput('task_id', $this->context->task_id, ['class' => 'js-task_id']) ?>
-<?= \yii\helpers\Html::hiddenInput('project_id', $this->context->project_id, ['class' => 'js-project_id']) ?>

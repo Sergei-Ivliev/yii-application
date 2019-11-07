@@ -77,6 +77,7 @@ class ProjectController extends Controller
         $model = new Project();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'New Project " ' . $model->name . ' " is created');
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -97,6 +98,8 @@ class ProjectController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'New Project " ' . $model->name . ' " is updated');
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -111,6 +114,8 @@ class ProjectController extends Controller
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {

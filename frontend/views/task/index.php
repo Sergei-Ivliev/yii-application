@@ -1,7 +1,7 @@
 <?php
 
 use common\models\Task;
-use common\widgets\chatWidget\ChatWidget;
+use common\widgets\chat\ChatWidget;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\helpers\Url;
@@ -36,6 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'format' => 'raw',
             ],
+            'project_id',
             'status_id',
             'description:ntext',
             'created_at:date',

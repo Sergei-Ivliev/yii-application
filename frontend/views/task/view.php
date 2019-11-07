@@ -1,8 +1,10 @@
 
 <?php
 
-use common\widgets\chatWidget\ChatWidget;
+use common\models\Task;
+use common\widgets\chat\ChatWidget;
 use yii\helpers\Html;
+use yii\web\YiiAsset;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
@@ -11,7 +13,7 @@ use yii\widgets\DetailView;
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Tasks', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-\yii\web\YiiAsset::register($this);
+YiiAsset::register($this);
 ?>
 <div class="task-view">
 
@@ -35,14 +37,31 @@ $this->params['breadcrumbs'][] = $this->title;
             'project_id',
             'name',
             'description:ntext',
-            'author_id',
+            [
+                'label' => 'Author',
+                'value' => function (Task $model) {
+                    return $model->author->username;
+                }
+            ],
             'executor_id',
-            'status_id',
+            [
+                'label' => 'Status',
+                'value' => function (Task $model) {
+                    return $model->status->name;
+                }
+            ],
             'priority_id',
+            [
+                'label' => 'Priority',
+                'value' => function (Task $model) {
+                    return $model->priority->name;
+                }
+            ],
             'created_at:date',
             'updated_at:date',
         ],
     ]) ?>
-    <?= ChatWidget::widget(['project_id' => $model->id]);?>
+
+    <?= ChatWidget::widget(['task_id'=>$model->id, 'project_id' => $model->id]);?>
 
 </div>

@@ -4,6 +4,8 @@
 namespace common\models;
 
 
+use common\components\behaviors\ChatLogBehavior;
+use common\components\interfaces\ChatLoggable;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
@@ -20,9 +22,9 @@ use yii\db\ActiveRecord;
  * @property int $updated_at
  *
  * @property ProjectStatus $projectStatus
- * @property User $user
+ * @property User $author
  */
-class Project extends ActiveRecord
+class Project extends ActiveRecord implements ChatLoggable
 {
     /**
      * {@inheritdoc}
@@ -68,6 +70,9 @@ class Project extends ActiveRecord
                     ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
                     'value' => time(),
                 ],
+            ],
+            'chatLogBehavior' => [
+                'class' => ChatLogBehavior::class,
             ],
         ];
     }
@@ -115,14 +120,14 @@ class Project extends ActiveRecord
 
     }
 
-    public function AfterSave($insert, $changedAttribute)
+    public function saveChatLog()
     {
-        if ($insert) {
-            ChatLog::saveLog([
-                'username' => Yii::$app->user->identity->username,
-                'message' => 'Создал новый проект #'.$this->id,
-                'project_id'=>$this->id,
-            ]);
-        }
+        $chatLog = new ChatLog();
+        $message = "Пользователь {$this->author->username} создал новый проект {$this->name}";
+        $chatLog->project_id = $this->id;
+        $chatLog->type = ChatLog::TYPE_CHAT_MESSAGE;
+        $chatLog->username = \Yii::$app->user->identity->username;
+        $chatLog->message = $message;
+        $chatLog->save();
     }
 }

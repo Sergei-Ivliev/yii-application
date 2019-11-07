@@ -1,36 +1,64 @@
 <?php
 
+use common\models\Project;
+use common\widgets\chat\ChatWidget;
+use frontend\models\TaskSearch;
+use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
 use yii\helpers\Html;
+use yii\web\YiiAsset;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Project */
-/* @var $taskDataProvider \yii\data\ActiveDataProvider */
-/* @var $taskSearch \frontend\models\TaskSearch */
+/* @var $taskDataProvider ActiveDataProvider */
+/* @var $taskSearch TaskSearch */
 
-$this->title = 'Задачи проекта '.$model->name;
+$this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Projects', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-\yii\web\YiiAsset::register($this);
+YiiAsset::register($this);
 ?>
 <div class="project-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
-    <?= GridView::widget([
-        'filterModel' => $taskSearch,
-        'dataProvider' => $taskDataProvider,
-        'columns' => [
+    <p>
+        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+            'class' => 'btn btn-danger',
+            'data' => [
+                'confirm' => 'Are you sure you want to delete this item?',
+                'method' => 'post',
+            ],
+        ]) ?>
+    </p>
+
+    <?= DetailView::widget([
+        'model' => $model,
+        'attributes' => [
             'id',
             'name',
-            'created_at:datetime',
-            'description',
-            'status.name',
-            'priority.name',
-            'author.email',
-        ]
+            [
+                'label'=>'Author',
+                'value'=> function(Project $model) {
+                    return $model->author->username;
+
+                }
+            ],
+            [
+                'label'=>'Status',
+                'value'=> function(Project $model) {
+                    return $model->projectStatus->name;
+
+                }
+            ],
+            'created_at:date',
+            'updated_at:date',
+        ],
     ]) ?>
-    <?=\common\widgets\chatWidget\ChatWidget::widget(['project_id' => $model->id]);?>
+
+
+    <?= ChatWidget::widget(['project_id' => $model->id]);?>
 
 
 

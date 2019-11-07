@@ -12,7 +12,9 @@ class m191102_122143_update_chat_log_table extends Migration
      */
     public function safeUp()
     {
-
+        $this->addColumn('chat_log', 'type', $this->integer());
+        $this->addForeignKey('fk_chat_log_task_id', 'chat_log', 'task_id', 'task', 'id');
+        $this->addForeignKey('fk_chat_log_project_id', 'chat_log', 'project_id', 'project', 'id');
     }
 
     /**
@@ -20,9 +22,9 @@ class m191102_122143_update_chat_log_table extends Migration
      */
     public function safeDown()
     {
-        echo "m191102_122143_update_chat_log_table cannot be reverted.\n";
-
-        return false;
+        $this->dropForeignKey('fk_chat_log_task_id', 'chat_log');
+        $this->dropForeignKey('fk_chat_log_project_id', 'chat_log');
+        $this->dropColumn('chat_log', 'type');
     }
 
     /*

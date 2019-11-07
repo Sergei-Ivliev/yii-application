@@ -17,13 +17,19 @@ $config = [
     'bootstrap' => ['api', 'log'],
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
-//        'view' => [
-//            'theme' => [
-//                'pathMap' => [
-//                    '@app/views' => '@vendor/dmstr/yii2-adminlte-asset/example-views/yiisoft/yii2-app'
-//                ],
-//            ],
+        // for server
+//        'cache' => [
+//            'class' => \yii\caching\MemCache::class,
+//            'useMemcached' => true,
+//            'servers' => [
+//                'host' => 'localhost',
+//                'port' => 11211,
+//                'persistent' => false,
+//            ]
 //        ],
+        'assetManager' => [
+            'appendTimestamp' => true,
+        ],
         'request' => [
             'csrfParam' => '_csrf-frontend',
             'parsers' => [
@@ -60,7 +66,7 @@ $config = [
                     'controller' => 'api/task',
                     'class' => UrlRule::class,
                     // откл трансформацию task в tasks
-                     'pluralize' => true,
+                    'pluralize' => true,
                     'extraPatterns' => [
                         // 'METHOD action' =>'actionFunction,
                         'POST random/<count>' => 'random',
@@ -70,7 +76,7 @@ $config = [
                     'controller' => 'v1/task',
                     'class' => UrlRule::class,
                     //отключим трансформацию task в tasks
-                     'pluralize' => true,
+                    'pluralize' => true,
                     'extraPatterns' => [
                         //'METHOD action' => 'actionFunction',
                         'POST random/<count>' => 'random',
@@ -86,20 +92,6 @@ $config = [
                         'GET <id>/tasks' => 'tasks',
                     ],
                 ],
-//                'view'=>[
-//                    'theme' => [
-//                        'basePath' => '@app/themes/first',  //базовая директория со стилизованными ресурсами (CSS, JS, изображения)
-//                        'baseUrl' => '@web/themes/first',   // базовый адрес доступа к стилизованным ресурсам.
-//                        'pathMap' => [  //правила замены файлов view
-//                            '@app/views/user' => '@app/themes/first/user',
-//                            '@app/modules' => '@app/themes/first/modules',
-//                            '@app/widgets' => '@app/themes/first/widgets',
-//                        ],
-//                    ]
-//                ],
-
-//                '' => 'site/index',
-//                '<controller:\w+>/<action:\w+>/' => '<controller>/<action>',
             ],
         ],
     ],

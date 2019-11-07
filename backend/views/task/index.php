@@ -43,6 +43,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             [
+                'attribute' => 'priority',
+                'value' => function (Task $model) {
+                    return $model->priority->name;
+                }
+            ],
+            [
                 'attribute' => 'projectName',
                 'value' => function (Task $model) {
                     if (!empty($model->project)) {
@@ -51,7 +57,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     return null;
                 }
             ],
-            //'priority_id',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

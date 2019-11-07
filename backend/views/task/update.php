@@ -1,11 +1,13 @@
 <?php
 
+use common\models\Project;
+use common\models\User;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Task */
-/* @var $activeUsers \common\models\User[] */
-/* @var $projects \common\models\Project[] */
+/* @var $activeUsers User[] */
+/* @var $projects Project[] */
 
 
 $this->title = 'Update Task: ' . $model->name;

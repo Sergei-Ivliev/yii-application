@@ -23,10 +23,8 @@
     "yiisoft/yii2": "~2.0.14",
     "yiisoft/yii2-bootstrap": "~2.0.0",
     "yiisoft/yii2-swiftmailer": "~2.0.0 || ~2.1.0",
-    "dmstr/yii2-adminlte-asset": "2.*",
     "cboden/ratchet": "^0.4.1",
     "ext-json": "*",
-    "sonko-dmitry/yii2-telegram-bot-api": "*",
     "2amigos/yii2-editable-widget": "~1.0"
   },
   "require-dev": {
