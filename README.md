@@ -1,1 +1,1 @@
-# yii-application
+# yii-advanced-application
