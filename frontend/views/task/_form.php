@@ -37,21 +37,3 @@ use yii\widgets\ActiveForm;
     <?php ActiveForm::end(); ?>
 
 </div>
-
-<?//=  Html::beginForm([''], 'post', ['class' => 'task-form'])?>
-<!---->
-<?//= Html::activeLabel($model, 'Название', ['class' => 'name'])?><!--<br>-->
-<?//= Html :: activeInput ( 'text' , $model , 'name', ['placeholder' => '    name', 'autofocus' => true])?><!-- <br><br>-->
-<?//= Html::activeLabel($model, 'Проект', ['class' => 'name'])?><!--<br>-->
-<?//= Html :: activeInput ( 'text' , $model , 'project_id')?><!-- <br><br>-->
-<?//= Html::activeLabel($model, 'Статус', ['class' => 'name'])?><!--<br>-->
-<?//= Html :: activeInput ( 'text' , $model , 'status_id')?><!-- <br><br>-->
-<?//= Html::activeLabel($model, 'Описание', ['class' => 'name'])?><!--<br>-->
-<?//= Html :: activeInput ( 'text' , $model , 'description')?><!-- <br><br>-->
-<?//= Html::activeLabel($model, 'Исполнитель', ['class' => 'name'])?><!--<br>-->
-<?//= Html :: activeInput ( 'text' , $model , 'executor_id')?><!-- <br><br>-->
-<?//= Html::activeLabel($model, 'Приоритет', ['class' => 'name'])?><!--<br>-->
-<?//= Html :: activeInput ( 'text' , $model , 'priority_id')?><!-- <br><br>-->
-<!---->
-<?//= Html :: submitButton ( 'Save' , [ 'class' => 'btn btn-success']) ?>
-<?//=  Html::endForm()?>
