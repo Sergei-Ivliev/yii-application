@@ -2,9 +2,11 @@
 
 namespace frontend\controllers;
 
+use frontend\models\TaskSearch;
 use Yii;
 use common\models\Task;
 use yii\data\ActiveDataProvider;
+use yii\db\StaleObjectException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -35,11 +37,12 @@ class TaskController extends Controller
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Task::find(),
-        ]);
+        $searchModel = new TaskSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 20;
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -88,7 +91,7 @@ class TaskController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            Yii::$app->session->setFlash('success', 'New task " ' . $model->name . ' " is updated');
+            Yii::$app->session->setFlash('success', 'The task " ' . $model->name . ' " is updated');
             return $this->redirect(['view', 'id' => $model->id]);
         }
         return $this->render('update', [
@@ -102,9 +105,12 @@ class TaskController extends Controller
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws StaleObjectException
+     * @throws \Throwable
      */
     public function actionDelete($id)
     {
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

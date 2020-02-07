@@ -12,9 +12,9 @@ use console\components\SocketServer;
 
 class SocketController extends Controller
 {
+
     public function actionStart()
     {
-
         $server = IoServer::factory(
             new HttpServer(
                 new WsServer(

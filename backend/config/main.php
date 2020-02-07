@@ -6,7 +6,7 @@ $params = array_merge(
     require __DIR__ . '/params-local.php'
 );
 
-return [
+$config = [
     'id' => 'app-backend',
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
@@ -15,13 +15,6 @@ return [
     'components' => [
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
-        ],
-        'view' => [
-            'theme' => [
-                'pathMap' => [
-                    '@app/views' => '@vendor/dmstr/yii2-adminlte-asset/example-views/yiisoft/yii2-app'
-                ],
-            ],
         ],
         'request' => [
             'csrfParam' => '_csrf-backend',
@@ -47,15 +40,30 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        'baseUrl' => '/admin',
+//        'baseUrl' => '/admin',
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                '' => 'site/index',
-                '<controller:\w+>/<action:\w+>/' => '<controller>/<action>',
+//                '' => 'site/index',
+//                '<controller:\w+>/<action:\w+>/' => '<controller>/<action>',
             ],
         ],
     ],
     'params' => $params,
 ];
+if (YII_ENV_DEV) {
+    // configuration adjustments for 'dev' environment
+    $config['bootstrap'][] = 'debug';
+    $config['modules']['debug'] = [
+        'class' => 'yii\debug\Module',
+        'allowedIPs' => ['*']
+    ];
+
+    $config['bootstrap'][] = 'gii';
+    $config['modules']['gii'] = [
+        'class' => 'yii\gii\Module',
+        'allowedIPs' => ['*']
+    ];
+}
+return $config;

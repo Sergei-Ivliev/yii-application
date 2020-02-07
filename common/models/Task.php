@@ -2,10 +2,16 @@
 
 namespace common\models;
 
+use common\components\behaviors\ChatLogBehavior;
+use common\components\interfaces\ChatLoggable;
 use Yii;
+use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\helpers\Url;
+use yii\web\Link;
+use yii\web\Linkable;
 
 
 /**
@@ -14,10 +20,12 @@ use yii\db\ActiveRecord;
  * @property int $id
  * @property string $name
  * @property string $description
- * @property string $author_id
- * @property string $executor_id
+ * @property int $author_id
+ * @property int $executor_id
  * @property int $status_id
  * @property int $priority_id
+ * @property int $accountable_id
+ * @property int $project_id
  * @property TimestampBehavior $created_at
  * @property TimestampBehavior $updated_at
  *
@@ -25,8 +33,12 @@ use yii\db\ActiveRecord;
  * @property Tag[] $tags
  * @property TaskPriority $priority
  * @property TaskStatus $status
+ * @property User $author
+ * @property User $executor
+ * @property User $accountable
+ * @property Project $project
  */
-class Task extends ActiveRecord
+class Task extends ActiveRecord implements Linkable, ChatLoggable
 {
     /**
      * {@inheritdoc}
@@ -42,10 +54,11 @@ class Task extends ActiveRecord
     public function rules()
     {
         return [
+            ['author_id', 'default', 'value' => Yii::$app->user->id],
             [['name', 'description', 'author_id', 'status_id', 'priority_id'], 'required'],
             [['description'], 'string'],
-            [['author_id', 'status_id', 'priority_id'], 'integer'],
-            [['name', 'executor_id'], 'string', 'max' => 255],
+            [['name'], 'string', 'max' => 255],
+            [['author_id', 'status_id', 'priority_id', 'project_id', 'executor_id', 'accountable_id'], 'integer'],
             [['priority_id'], 'exist', 'skipOnError' => true, 'targetClass' => TaskPriority::class, 'targetAttribute' => ['priority_id' => 'id']],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => TaskStatus::class, 'targetAttribute' => ['status_id' => 'id']],
             [['created_at', 'updated_at'], 'safe']
@@ -60,13 +73,12 @@ class Task extends ActiveRecord
         return [
             'id' => 'ID',
             'name' => 'Name',
-            'author_id' => 'Author',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'executor_id' => 'Executor',
+            'author_id' => 'Author ID',
+            'executor_id' => 'Executor ID',
             'description' => 'Description',
-            'status_id' => 'Status',
-            'priority_id' => 'Priority',
+            'status_id' => 'Status ID',
+            'priority_id' => 'Priority ID',
+            'project_id' => 'Project ID',
         ];
     }
 
@@ -78,33 +90,34 @@ class Task extends ActiveRecord
                 'attributes' => [
                     ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
                     ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
-                    'value' => function () {
-                        return date('yyyy-m-d');
-                    }
-//                    'value' => time(),
-
+                    'value' => time(),
                 ],
+            ],
+            'chatLogBehavior' => [
+                'class' => ChatLogBehavior::class,
+            ],
+            'authorBehavior' => [
+                'class' => BlameableBehavior::class,
+                'createdByAttribute' => 'author_id',
+                'updatedByAttribute' => false,
+                'value' => Yii::$app->user->id
             ],
         ];
     }
 
-    public function task()
+    public function beforeValidate()
     {
-        if (!$this->validate()) {
-            return null;
+        if (Yii::$app->request->isPost) {
+            $this->status_id = TaskStatus::IN_PROGRESS_ID;
+            $this->priority_id = TaskPriority::NORMAL_ID;
         }
-        $task = new Task();
 
-        $task->id = $this->id;
-        $task->name = $this->name;
-        $task->author_id = $this->author_id;
-        $task->created_at = $this->created_at;
-        $task->updated_at = $this->updated_at;
-        $task->description = $this->description;
-        $task->executor_id = $this->executor_id;
-        $task->status = $this->status;
+        return parent::beforeValidate();
+    }
 
-        return $task->save();
+    public function AfterSave($insert, $changedAttribute)
+    {
+        parent::afterSave($insert, $changedAttribute);
     }
 
     /**
@@ -134,9 +147,41 @@ class Task extends ActiveRecord
     /**
      * @return ActiveQuery
      */
+    public function getAuthor()
+    {
+        return $this->hasOne(User::class, ['id' => 'author_id']);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getExecutor()
+    {
+        return $this->hasOne(User::class, ['id' => 'executor_id']);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getAccountable()
+    {
+        return $this->hasOne(User::class, ['id' => 'accoutable_id']);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
     public function getStatus()
     {
         return $this->hasOne(TaskStatus::class, ['id' => 'status_id']);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getProject()
+    {
+        return $this->hasOne(Project::class, ['id' => 'project_id']);
     }
 
     public function fields()
@@ -147,7 +192,6 @@ class Task extends ActiveRecord
                 if (isset($this->created_at)){
                     return Yii::$app->formatter->asDatetime($this->created_at);
                 }
-
                 return null;
             },
             'priority_id' => function () {
@@ -155,9 +199,52 @@ class Task extends ActiveRecord
             },
             'status_id' => function () {
                 return $this->status->name;
+            },
+            'someRandomName' => function () {
+                return rand(0, 100000);
             }
         ];
 
         return array_merge($parentFields, $modelFields);
+    }
+
+
+    public function getLinks()
+    {
+        return [
+            Link::REL_SELF => Url::to(['task/view', 'id' => $this->id], true),
+            'author_link' => Url::to(['user/view', 'id' => $this->author_id], true),
+        ];
+    }
+
+    public function extraFields()
+    {
+        return [
+            'author' => function () {
+               return $this->author;
+            }
+        ];
+    }
+
+    public static function findOne($condition)
+    {
+        if (Yii::$app->cache->exists(self::tableName() . '_' . $condition) === false) {
+            return parent::findOne($condition);
+        } else {
+            return Yii::$app->cache->get(self::tableName() . '_' . $condition);
+        }
+    }
+
+    public function saveChatLog()
+    {
+        $chatLog = new ChatLog();
+
+        $message = "Пользователь {$this->author->username} создал новую задачу {$this->name}";
+        $chatLog->task_id = $this->id;
+        $chatLog->project_id = $this->project_id;
+        $chatLog->type = ChatLog::TYPE_CHAT_MESSAGE;
+        $chatLog->username = \Yii::$app->user->identity->username;
+        $chatLog->message = $message;
+        $chatLog->save();
     }
 }
