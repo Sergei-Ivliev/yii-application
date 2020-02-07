@@ -16,13 +16,13 @@ return [
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
         ],
-        'view' => [
-            'theme' => [
-                'pathMap' => [
-                    '@app/views' => '@vendor/dmstr/yii2-adminlte-asset/example-views/yiisoft/yii2-app'
-                ],
-            ],
-        ],
+//        'view' => [
+//            'theme' => [
+//                'pathMap' => [
+//                    '@app/views' => '@vendor/dmstr/yii2-adminlte-asset/example-views/yiisoft/yii2-app'
+//                ],
+//            ],
+//        ],
         'request' => [
             'csrfParam' => '_csrf-backend',
         ],
@@ -47,13 +47,13 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        'baseUrl' => '/admin',
+//        'baseUrl' => '/admin',
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                '' => 'site/index',
-                '<controller:\w+>/<action:\w+>/' => '<controller>/<action>',
+//                '' => 'site/index',
+//                '<controller:\w+>/<action:\w+>/' => '<controller>/<action>',
             ],
         ],
     ],

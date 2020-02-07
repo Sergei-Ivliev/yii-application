@@ -1,8 +1,11 @@
 <?php
 
 /* @var $this yii\web\View */
-
 $this->title = 'My Yii Application';
+//(new console\controllers\SocketController)->actionStart();
+
+
+
 ?>
 <div class="site-index">
 

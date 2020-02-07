@@ -24,8 +24,6 @@ class m191020_142132_create_project_table extends Migration
         $this->createTable('{{project_status}}', [
             'id' => $this->primaryKey(),
             'name' => $this->string()->notNull(),
-            'created_at'=>$this->integer(),
-            'updated_at'=>$this->integer()
         ]);
 
         $this->addForeignKey('fk_project_user_id', 'project', 'user_id', 'user', 'id');

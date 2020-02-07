@@ -1,6 +1,7 @@
 
 <?php
 
+use common\widgets\chatWidget\ChatWidget;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -31,15 +32,17 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
+            'project_id',
             'name',
-            'status_id',
             'description:ntext',
-            'created_at:date',
-            'updated_at:date',
             'author_id',
             'executor_id',
+            'status_id',
             'priority_id',
+            'created_at:date',
+            'updated_at:date',
         ],
     ]) ?>
+    <?= ChatWidget::widget(['project_id' => $model->id]);?>
 
 </div>
