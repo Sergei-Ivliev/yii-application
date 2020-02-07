@@ -1,10 +1,14 @@
 <?php
+
 namespace common\models;
 
 use Yii;
+use yii\base\Exception;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\filters\auth\HttpBearerAuth;
+use yii\filters\auth\QueryParamAuth;
 use yii\web\IdentityInterface;
 
 /**
@@ -53,6 +57,9 @@ class User extends ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
+            [['username', 'email'], 'required'],
+            [['username', 'email'], 'string'],
+            [['email'], 'email'],
             ['status', 'default', 'value' => self::STATUS_INACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_DELETED]],
         ];
@@ -71,7 +78,11 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
+        if ($type === HttpBearerAuth::class) {
+            return static::findOne(['auth_key' => $token]);
+        } else if ($type === QueryParamAuth::class) {
+            return static::findOne(['auth_key' => $token]);
+        }
     }
 
     /**
@@ -109,7 +120,8 @@ class User extends ActiveRecord implements IdentityInterface
      * @param string $token verify email token
      * @return static|null
      */
-    public static function findByVerificationToken($token) {
+    public static function findByVerificationToken($token)
+    {
         return static::findOne([
             'verification_token' => $token,
             'status' => self::STATUS_INACTIVE
@@ -128,7 +140,7 @@ class User extends ActiveRecord implements IdentityInterface
             return false;
         }
 
-        $timestamp = (int) substr($token, strrpos($token, '_') + 1);
+        $timestamp = (int)substr($token, strrpos($token, '_') + 1);
         $expire = Yii::$app->params['user.passwordResetTokenExpire'];
         return $timestamp + $expire >= time();
     }
@@ -172,6 +184,7 @@ class User extends ActiveRecord implements IdentityInterface
      * Generates password hash from password and sets it to the model
      *
      * @param string $password
+     * @throws Exception
      */
     public function setPassword($password)
     {
@@ -180,6 +193,7 @@ class User extends ActiveRecord implements IdentityInterface
 
     /**
      * Generates "remember me" authentication key
+     * @throws Exception
      */
     public function generateAuthKey()
     {
@@ -188,6 +202,7 @@ class User extends ActiveRecord implements IdentityInterface
 
     /**
      * Generates new password reset token
+     * @throws Exception
      */
     public function generatePasswordResetToken()
     {
@@ -196,7 +211,10 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function generateEmailVerificationToken()
     {
-        $this->verification_token = Yii::$app->security->generateRandomString() . '_' . time();
+        try {
+            $this->verification_token = Yii::$app->security->generateRandomString() . '_' . time();
+        } catch (Exception $e) {
+        }
     }
 
     /**
@@ -205,5 +223,25 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+
+    public static function getActiveUsers()
+    {
+        return self::find()->where(['status' => self::STATUS_ACTIVE])->all();
+
+    }
+
+    public function afterValidate()
+    {
+        try {
+            $this->setPassword(Yii::$app->security->generateRandomString(6));
+        } catch (Exception $e) {
+        }
+        try {
+            $this->generateAuthKey();
+        } catch (Exception $e) {
+        }
+        $this->generateEmailVerificationToken();
+        parent::afterValidate();
     }
 }

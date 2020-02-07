@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use Yii;
 use common\models\Task;
 use yii\data\ActiveDataProvider;
+use yii\db\StaleObjectException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -105,7 +106,12 @@ class TaskController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        try {
+            $this->findModel($id)->delete();
+        } catch (StaleObjectException $e) {
+        } catch (NotFoundHttpException $e) {
+        } catch (\Throwable $e) {
+        }
 
         return $this->redirect(['index']);
     }

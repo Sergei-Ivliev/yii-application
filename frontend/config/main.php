@@ -1,4 +1,7 @@
 <?php
+
+use yii\rest\UrlRule;
+
 $params = array_merge(
     require __DIR__ . '/../../common/config/params.php',
     require __DIR__ . '/../../common/config/params-local.php',
@@ -48,6 +51,33 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                [
+                    'controller' => 'task',
+                    'class' => UrlRule::class,
+                    // откл трансформацию task в tasks
+                    // 'pluralize' => false,
+                    'extraPatterns' => [
+                        // 'METHOD action' =>'actionFunction,
+                        'POST random/<count>' => 'random',
+                    ],
+                ],
+                [
+                    'class' => UrlRule::class,
+                    'controller' => 'api/user',
+                    'pluralize' => true,
+                    'extraPatterns' => [
+                        // actions
+                        'GET me' => 'me',
+                        'GET <id>/tasks' => 'tasks',
+                        'GET tasks' => 'tasks',
+                    ],
+                ],
+                [
+                    'class' => UrlRule::class,
+                    'controller' => 'api/user',
+                    'pluralize' => true,
+                ],
+
                 '' => 'site/index',
                 '<controller:\w+>/<action:\w+>/' => '<controller>/<action>',
             ],
