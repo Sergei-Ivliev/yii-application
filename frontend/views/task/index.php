@@ -1,8 +1,9 @@
-
 <?php
 
+use common\models\Task;
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -25,7 +26,13 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            'name',
+            [
+                'attribute' => 'name',
+                'value' => function (Task $task) {
+                    return Html::a(Html::encode($task->name), Url::to(['view', 'id' => $task->id]));
+                },
+                'format' => 'raw',
+            ],
             'status_id',
             'description:ntext',
             'created_at',

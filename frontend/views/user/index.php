@@ -1,7 +1,9 @@
 <?php
 
+use common\models\User;
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -24,7 +26,13 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            'username',
+            [
+                'attribute' => 'name',
+                'value' => function (User $user) {
+                    return Html::a(Html::encode($user->username), Url::to(['view', 'id' => $user->id]));
+                },
+                'format' => 'raw',
+            ],
             'auth_key',
             'password_hash',
             'password_reset_token',
